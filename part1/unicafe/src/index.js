@@ -1,6 +1,11 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
 
+const StatisticLine = (props) => {
+  return (
+    <p>{props.text} {props.value}</p>
+  )
+}
 
 const Statistics = (props) => {
   return (
@@ -10,12 +15,12 @@ const Statistics = (props) => {
         <p>No feedback given</p>
       ) : (
         <div>
-          <p>good {props.stats.good}</p>
-          <p>neutral {props.stats.neutral}</p>
-          <p>bad {props.stats.bad}</p>
-          <p>all {props.stats.total}</p>
-          <p>average {props.stats.average}</p>
-          <p>positive {props.stats.positive} %</p>
+          <StatisticLine text="good" value={props.stats.good} />
+          <StatisticLine text="neutral" value={props.stats.neutral} />
+          <StatisticLine text="bad" value={props.stats.bad} />
+          <StatisticLine text="all" value={props.stats.total} />
+          <StatisticLine text="average" value={props.stats.average} />
+          <StatisticLine text="positive" value={props.stats.positive + " %"} />
         </div>
       )}
     </>
