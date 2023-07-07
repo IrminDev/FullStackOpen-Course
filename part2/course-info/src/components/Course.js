@@ -6,9 +6,16 @@ import Total from './Total'
 const Course = ({course}) => {
     return (
         <div>
-            <Header course={course.name} />
-            <Content parts={course.parts} />
-            <Total total={course.parts.reduce((sum, part) => sum + part.exercises, 0)} />
+            <h1>Web development curriculum</h1>
+            {course.map(course => {
+                return (
+                    <div key={course.id}>
+                        <Header name={course.name} />
+                        <Content parts={course.parts} />
+                        <Total total={course.parts.reduce((sum, part) => sum + part.exercises, 0)} />
+                    </div>
+                )
+            })}
         </div>
     )
 }
