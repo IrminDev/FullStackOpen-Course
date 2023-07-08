@@ -4,26 +4,40 @@ import ReactDOM from 'react-dom/client'
 
 const App = () => {
   const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', id: 1 }
+    { name: 'Arto Hellas',
+      phoneNumber: '040-1234567',
+      id: 1
+    }
   ]) 
   const [ newName, setNewName ] = useState('')
+  const [phone, setPhone] = useState('')
 
   const addPerson = (e) => {
     e.preventDefault();
     const personObject = {
       name: newName,
+      phoneNumber: phone,
       id: persons.length + 1
     }
     if(persons.find(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
       return;
     } else {
-      setPersons(persons.concat(personObject))
+      if(persons.find(person => person.phone === phone)) {
+        alert(`${phone} is already added to phonebook`)
+        return;
+      } else {
+        setPersons(persons.concat(personObject));
+      }
     }
   }
 
   const handlePersonChange = (e) => {
     setNewName(e.target.value)
+  }
+
+  const handlePhoneChange = (e) => {
+    setPhone(e.target.value)
   }
 
   return (
@@ -34,11 +48,20 @@ const App = () => {
           name: <input onChange={handlePersonChange} />
         </div>
         <div>
+          phoneNumber: <input onChange={handlePhoneChange} />
+        </div>
+        <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(person => <div key={person.name}>{person.name}</div>)}
+      {persons.map(person => {
+        return (
+          <div key={person.name}>
+            {person.name} {person.phoneNumber}
+          </div>
+        )
+      })}
     </div>
   )
 }
