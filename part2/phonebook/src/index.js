@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
+import axios from 'axios'
 import ReactDOM from 'react-dom/client'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
@@ -30,6 +31,10 @@ const App = () => {
 
   const addPerson = (e) => {
     e.preventDefault();
+    if(newName === '' || phone === '') {
+      alert('Please fill in all fields')
+      return;
+    }
     const personObject = {
       name: newName,
       number: phone,
@@ -38,15 +43,25 @@ const App = () => {
     if(persons.find(person => person.name === newName)) {
       if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const person = persons.find(person => person.name === newName)
-        updatePerson(person.id, personObject)
-        setNewName('')
-        setPhone('')
-        setMessage(`${person.name} number's changed to ${phone}`)
-        setType('notification')
-        setTimeout(() => {
-            setMessage('')
-            setType('')
-        }, 5000)
+        axios.put(`http://localhost:3001/persons/${person.id}`, personObject)
+        .then(resp => {
+          setNewName('')
+          setPhone('')
+          setMessage(`${person.name} number's changed to ${phone}`)
+          setType('notification')
+          setTimeout(() => {
+              setMessage('')
+              setType('')
+          }, 5000)
+        })
+        .catch(error => {
+          setMessage(`${person.name} was already removed from server`)
+          setType('error')
+          setTimeout(() => {
+              setMessage('')
+              setType('')
+          }, 5000)
+        })
         return;
       }
       return;
@@ -55,15 +70,17 @@ const App = () => {
         if(window.confirm(`${newName} is already added to phonebook, replace the old name with a new one?`)) {
           const person = persons.find(person => person.number === phone)
           updatePerson(person.id, personObject)
-          setNewName('')
-          setPhone('')
-          setMessage(`${phone} owner changed to ${personObject.name}`)
-          setType('notification')
-          setTimeout(() => {
-              setMessage('')
-              setType('')
-          }, 5000)
-          return;
+          .then(resp => {
+            setNewName('')
+            setPhone('')
+            setMessage(`${phone} owner changed to ${personObject.name}`)
+            setType('notification')
+            setTimeout(() => {
+                setMessage('')
+                setType('')
+            }, 5000)
+            return;
+          })
         }
       } else {
         personService
