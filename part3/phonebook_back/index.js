@@ -36,7 +36,6 @@ app.get('/api/persons', (req, res) => {
             persons = persons.concat(person)
         })
         res.json(persons)
-        mongoose.connection.close()
     })
 })
 
@@ -45,26 +44,23 @@ app.get('/info', (req, res) => {
     <p>${new Date()}</p>`)
 })
 
-app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    .then(person => {
+app.get('/api/persons/:id', (request, response, next) => {
+    Person.findById(request.params.id).then(person => {
         if (person) {
             response.json(person)
         } else {
             response.status(404).end()
         }
-    })
-    .catch(error => next(error))
+    }).catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id).then(result => {
         response.status(204).end()
     }).catch(error => next(error))
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
     const body = response.body
     const person = {
         name: body.name,
@@ -90,10 +86,6 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({ 
         error: 'number missing' 
         })
-    }
-
-    if(persons.find(person => person.name === body.name)) {
-
     }
 
     const person = new Person({
