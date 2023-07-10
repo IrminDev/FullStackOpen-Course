@@ -31,6 +31,7 @@ morgan.token('body', function(req, res) {
 let persons = []
 
 app.get('/api/persons', (req, res) => {
+    persons = []
     Person.find({}).then(result => {
         result.forEach(person => {
             persons = persons.concat(person)
