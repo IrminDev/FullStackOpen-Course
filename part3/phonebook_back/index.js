@@ -1,31 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
-
-let persons = [
-    {
-        id: 1,
-        name: "Irmin Hernandez",
-        number: "55-47762643",
-    },
-    {
-        id: 2,
-        name: "Irmin Jimenez",
-        number: "55-47572824",
-    },
-    {
-        id: 3,
-        name: "Ana Hernandez",
-        number: "55-23456512",
-    },
-    {
-        id: 4,
-        name: "Ana Jimenez",
-        number: "55-45761345",
-    },
-      
-]
+const mongoose = require('mongoose')
+const Person = require('./models/person')
 
 app.use(cors())
 app.use(express.json())
@@ -35,8 +14,16 @@ morgan.token('body', function(req, res) {
     return JSON.stringify(req.body);
 });
 
+let persons = []
+
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({}).then(result => {
+        result.forEach(person => {
+            persons = persons.concat(person)
+        })
+        res.json(persons)
+        mongoose.connection.close()
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -55,10 +42,9 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(note => note.id !== id)
-  
-    response.status(204).end()
+    Person.findById(request.params.id).then(result => {
+        response.json(result)
+    })
 })
 
 app.post('/api/persons', (request, response) => {
@@ -76,21 +62,15 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    if (persons.find(person => person.name === body.name)) {
-        return response.status(400).json({ 
-        error: 'name must be unique' 
-        })
-    }
-
-    const person = {
+    const person = new Person({
         name: body.name,
         number: body.number,
-        id: Math.floor(Math.random() * 1000),
-    }
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(result => {
+        console.log(`added ${person.name} number ${person.number} to phonebook`)
+        response.json(result)
+    })
 })
 
 const PORT = process.env.PORT || 3001
