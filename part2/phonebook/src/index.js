@@ -43,7 +43,7 @@ const App = () => {
     if(persons.find(person => person.name === newName)) {
       if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const person = persons.find(person => person.name === newName)
-        axios.put(`http://localhost:3001/persons/${person.id}`, personObject)
+        axios.put(`http://localhost:3001/api/persons/${person.id}`, personObject)
         .then(resp => {
           setNewName('')
           setPhone('')
