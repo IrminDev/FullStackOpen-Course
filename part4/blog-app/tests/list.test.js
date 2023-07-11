@@ -54,3 +54,41 @@ describe('total likes', () => {
         expect(result).toBe(10)
     })
 })
+
+describe('favorite blog', () => {
+    const someList = [
+        {
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            likes: 5,
+        },
+        {
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 12,
+        }
+    ]
+
+    const listWithOneBlog = [
+        {
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            likes: 5,
+        }
+    ]
+
+    test('of empty list is null', () => {
+        const result = list_helper.favoriteBlog([])
+        expect(result).toBe(null)
+    })
+
+    test('of a list with one blog is that blog', () => {
+        const result = list_helper.favoriteBlog([listWithOneBlog[0]])
+        expect(result).toEqual(listWithOneBlog[0])
+    })
+
+    test('of a list with multiple blogs is the one with most likes', () => {
+        const result = list_helper.favoriteBlog(someList)
+        expect(result).toEqual(someList[1])
+    })
+})
