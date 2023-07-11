@@ -92,3 +92,46 @@ describe('favorite blog', () => {
         expect(result).toEqual(someList[1])
     })
 })
+
+describe('most blogs', () => {
+    const someList = [
+        {
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            likes: 5,
+        },
+        {
+            author: 'Edsger W. Dijkstra',
+            title: 'Go To Statement Considered Harmful',
+            likes: 12,
+        },
+        {
+            author: 'Irmin Hernandez',
+            title: 'Go To Statement Considered Harmful',
+            likes: 12,
+        }
+    ]
+
+    const listWithOneBlog = [
+        {
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            likes: 5,
+        },
+    ]
+
+    test('of empty list is null', () => {
+        const result = list_helper.mostBlogs([])
+        expect(result).toBe(null)
+    })
+    
+    test('of a list with one blog is that blog', () => {
+        const result = list_helper.mostBlogs(listWithOneBlog)
+        expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 1})
+    })
+
+    test('of a list with multiple blogs is the one with most blogs', () => {
+        const result = list_helper.mostBlogs(someList)
+        expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 2})
+    })
+})
