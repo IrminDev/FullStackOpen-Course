@@ -38,7 +38,6 @@ const App = () => {
     const personObject = {
       name: newName,
       number: phone,
-      id: persons.length + 1
     }
     if(persons.find(person => person.name === newName)) {
       if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
