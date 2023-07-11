@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 const Person = require('./models/person')
 
 const errorHandler = (error, request, response, next) => {
@@ -74,7 +75,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if (!body.name) {
@@ -97,7 +98,7 @@ app.post('/api/persons', (request, response) => {
     person.save().then(result => {
         console.log(`added ${person.name} number ${person.number} to phonebook`)
         response.json(result)
-    })
+    }).catch(error => next(error));
 })
 
 app.use(unknownEndpoint)
