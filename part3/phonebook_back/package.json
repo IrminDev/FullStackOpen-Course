@@ -11,6 +11,7 @@
   "author": "IrminDev",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^8.44.0",
     "nodemon": "^3.0.1"
   },
   "dependencies": {
