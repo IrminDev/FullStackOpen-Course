@@ -1,8 +1,10 @@
-POST http://localhost:3003/api/users
+POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "username": "IrminDev",
-    "name": "Irmin",
-    "password": "fsadawwdas"
+    "title": "test shjkad",
+    "author": "test sadas",
+    "url": "http://www.google.com",
+    "likes": 2,
+    "userId": "64af379ac9bbfceef2a372ea"
 }
