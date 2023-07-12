@@ -45,6 +45,24 @@ test('a valid blog can be added', async () => {
     expect(contents).toContain('New test')
 }, 10000)
 
+test('likes default to 0', async () => {
+    const newBlog = {
+        title: 'New test',
+        author: 'IrminDev',
+        url: 'https://irmin.dev',
+    }
+
+    await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const lastBlog = blogsAtEnd[blogsAtEnd.length - 1]
+    expect(lastBlog.likes).toBe(0)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
+
