@@ -12,7 +12,8 @@
   "license": "MIT",
   "devDependencies": {
     "jest": "^29.6.1",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -21,6 +22,7 @@
     "mongoose": "^7.3.3"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "globalTeardown": "./tests/teardown.js"
   }
 }
