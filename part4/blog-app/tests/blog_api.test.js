@@ -141,4 +141,34 @@ describe('when there is initially one user in db', () => {
       const usernames = usersAtEnd.map(u => u.username)
       expect(usernames).toContain(newUser.username)
     })
-  })
+
+    test('username too short is not added', async () => {
+        const usersAtStart = await helper.usersInDb()
+    
+        const newUser = {
+          username: '1',
+          name: 'Matti Luukkainen',
+          password: 'salainen',
+        }
+    
+        await api
+          .post('/api/users')
+          .send(newUser)
+          .expect(400)
+    })
+
+    test('username duplicated is not added', async () => {
+        const usersAtStart = await helper.usersInDb()
+    
+        const newUser = {
+          username: '1',
+          name: 'Matti Luukkainen',
+          password: 'salainen',
+        }
+    
+        await api
+          .post('/api/users')
+          .send(newUser)
+          .expect(400)
+    })
+})
