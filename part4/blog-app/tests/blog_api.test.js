@@ -62,6 +62,16 @@ test('likes default to 0', async () => {
     expect(lastBlog.likes).toBe(0)
 })
 
+test('blog without title or url is not added', async () => {
+    const newBlog = {
+        url: 'https://irmin.dev',
+    }
+
+    await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
