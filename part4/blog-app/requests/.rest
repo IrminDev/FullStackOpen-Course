@@ -17,3 +17,8 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb
     "url": "test for url",
     "likes": 0
 }
+
+###
+DELETE http://localhost:3003/api/blogs/64af44d39ef2b1022fec13f9
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YWYzNzlhYzliYmZjZWVmMmEzNzJlYSIsImlhdCI6MTY4OTIwODI2Nn0.mEHdcjeJ6x5x4UX2Gb-jG_NJKfNt-6b64uthYVrjedI
