@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Message from './components/Message'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -107,37 +108,39 @@ const App = () => {
   const blogsForm = () => (
     <div>
       <h2>blogs</h2>
-      <form onSubmit={ handleCreate }>
-        <div>
-          title:
-          <input
-            type="text"
-            value={title}
-            name="title"
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          author:
-          <input
-            type="text"
-            value={author}
-            name="title"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          URL:
-          <input
-            type="text"
-            value={url}
-            name="title"
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
+      <Togglable buttonLabel="new blog">
+        <form onSubmit={ handleCreate }>
+          <div>
+            title:
+            <input
+              type="text"
+              value={title}
+              name="title"
+              onChange={({ target }) => setTitle(target.value)}
+            />
+          </div>
+          <div>
+            author:
+            <input
+              type="text"
+              value={author}
+              name="title"
+              onChange={({ target }) => setAuthor(target.value)}
+            />
+          </div>
+          <div>
+            URL:
+            <input
+              type="text"
+              value={url}
+              name="title"
+              onChange={({ target }) => setUrl(target.value)}
+            />
+          </div>
 
-        <button type="submit">new blog</button>
-      </form>
+          <button type="submit">new blog</button>
+        </form>
+      </Togglable>
 
       <div>
         <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
