@@ -3,6 +3,7 @@ Content-Type: application/json
 
 {
     "username": "root",
+    "name": "Superuser",
     "password": "sekret"
 }
 
