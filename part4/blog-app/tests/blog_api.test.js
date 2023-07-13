@@ -33,9 +33,22 @@ test('a valid blog can be added', async () => {
         likes: 0,
     }
 
+    const userToLogin = {
+        username: 'root',
+        password: 'sekret'
+    }
+
     console.log('newBlog', newBlog)
 
+    
+    const resp = await api.post('/api/login')
+    .send(userToLogin)
+    .expect(200)
+
+    console.log('resp.body', resp.body)
+
     await api.post('/api/blogs')
+    .set('Authorization', `bearer ${resp.body.token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -45,6 +58,20 @@ test('a valid blog can be added', async () => {
 
     const contents = blogsAtEnd.map(n => n.title)
     expect(contents).toContain('New test')
+}, 10000)
+
+test('an invalid user cant add new blog', async () => {
+  const newBlog = {
+      title: 'New test',
+      author: 'IrminDev',
+      url: 'https://irmin.dev',
+      likes: 0,
+  }
+  
+  await api.post('/api/blogs')
+  .set('Authorization', `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YWYzNzlhYzliYmZjZWVmMmEzNzJlYSIsImlhdCI6MTY4OTIwODc1NX0.0athIgOJzNe0OJ2s0FaeNAOFjIe2EH55r64WN-5G-fA`)
+  .send(newBlog)
+  .expect(401)
 }, 10000)
 
 test('likes default to 0', async () => {
@@ -118,6 +145,10 @@ describe('when there is initially one user in db', () => {
       const user = new User({ username: 'root', passwordHash })
   
       await user.save()
+
+      const user2 = new User({ username: 'root2', passwordHash })
+
+      await user2.save()
     })
   
     test('creation succeeds with a fresh username', async () => {
