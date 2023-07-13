@@ -5,3 +5,15 @@ Content-Type: application/json
     "username": "root",
     "password": "sekret"
 }
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YWYzNzlhYzliYmZjZWVmMmEzNzJlYSIsImlhdCI6MTY4OTIwNzUxMX0.pv0TPWXx0izEyFMx3XLkpNTiXcj0_xrJPYhywgyGXdw
+
+{
+    "title": "test for blog",
+    "author": "test for author",
+    "url": "test for url",
+    "likes": 0
+}
