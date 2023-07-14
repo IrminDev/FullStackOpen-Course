@@ -35,4 +35,33 @@ describe('<Blog />', () => {
         const element2 = component.getByText('0')
         expect(element2).toBeDefined()
     })
-});
+})
+
+test('clicking the button twice calls event handler twice', () => {
+    const blog = {
+        title: 'Component testing is done with react-testing-library',
+        author: 'Test Author',
+        url: 'http://localhost:3000',
+        likes: 0,
+        user: {
+            username: 'test',
+            name: 'test',
+            id: '123'
+        }
+    }
+
+    const mockHandler = jest.fn()
+
+    const component = render(
+        <Blog blog={blog} handleLike={mockHandler}/>
+    )
+
+    const button = component.getByText('view')
+    fireEvent.click(button)
+
+    const button2 = component.getByText('like')
+    fireEvent.click(button2)
+    fireEvent.click(button2)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+})
