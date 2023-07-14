@@ -104,7 +104,7 @@ const App = () => {
   const blogsForm = () => (
     <div>
       <h2>blogs</h2>
-      <Togglable buttonLabel="new blog">
+      <Togglable key='toggle' buttonLabel="new blog">
         <BlogForm createBlog={handleCreate} />
       </Togglable>
 
