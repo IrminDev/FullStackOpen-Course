@@ -76,6 +76,17 @@ const App = () => {
     }
   }
 
+  const handleLike = async (blog) => {
+    try{
+      await blogService.update(blog)
+    } catch (exception) {
+      setMessage('Wrong credentials')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
@@ -112,7 +123,7 @@ const App = () => {
         <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
       </div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
       )}
     </div>
   )
