@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Message from './components/Message'
 import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -26,6 +27,7 @@ const App = () => {
     if(loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -58,16 +60,10 @@ const App = () => {
     }
   }
   
-  const handleCreate = async (event) => {
-    event.preventDefault()
+  const handleCreate = async (blog) => {
     try{
-      const blog = await blogService.create({
-        title, author, url,
-      })
-      setBlogs(blogs.concat(blog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      const blogCreated = await blogService.create(blog)
+      setBlogs(blogs.concat(blogCreated))
       setMessage(`a new blog ${blog.title} by ${blog.author} added`)
       setTimeout(() => {
         setMessage(null)
@@ -109,37 +105,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Togglable buttonLabel="new blog">
-        <form onSubmit={ handleCreate }>
-          <div>
-            title:
-            <input
-              type="text"
-              value={title}
-              name="title"
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-          <div>
-            author:
-            <input
-              type="text"
-              value={author}
-              name="title"
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-          <div>
-            URL:
-            <input
-              type="text"
-              value={url}
-              name="title"
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-
-          <button type="submit">new blog</button>
-        </form>
+        <BlogForm createBlog={handleCreate} />
       </Togglable>
 
       <div>
