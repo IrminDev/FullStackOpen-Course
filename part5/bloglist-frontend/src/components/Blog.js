@@ -7,11 +7,11 @@ const Blog = ({blog, handleLike}) => {
   const likeBlog = () => {
     const blogObject = {
       ...blog,
-      likes: likes + 1
+      likes: likes + 1,
+      user: blog.user.id
     }
-
     handleLike(blogObject)
-    setLikes(blogObject.likes)
+    setLikes(likes + 1)
   }
 
   return (
