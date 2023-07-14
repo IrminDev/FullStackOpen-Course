@@ -19,11 +19,12 @@ function BlogForm({ createBlog }) {
 		setUrl('')
 	}
 	return (
-		<form onSubmit={addBlog}>
+		<form onSubmit={addBlog} className="form">
 			<div>
         title:
 				<input
 					type="text"
+					id='title'
 					value={title}
 					name="title"
 					onChange={({ target }) => setTitle(target.value)} />
@@ -32,16 +33,18 @@ function BlogForm({ createBlog }) {
         author:
 				<input
 					type="text"
+					id='author'
 					value={author}
-					name="title"
+					name="author"
 					onChange={({ target }) => setAuthor(target.value)} />
 			</div>
 			<div>
         URL:
 				<input
 					type="text"
+					id='url'
 					value={url}
-					name="title"
+					name="url"
 					onChange={({ target }) => setUrl(target.value)} />
 			</div>
 
