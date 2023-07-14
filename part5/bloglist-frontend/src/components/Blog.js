@@ -21,11 +21,11 @@ const Blog = ({ blog, handleLike, removeBlog, owner }) => {
 	}
 
 	return (
-		<div>
+		<div className='blog'>
 			{blog.title} {blog.author}
 			<Togglable buttonLabel="view">
-				<p>{blog.url}</p>
-				<p>{likes} <button onClick={likeBlog}>like</button></p>
+				<p className='url'>{blog.url}</p>
+				<p className='likes'>{likes} <button onClick={likeBlog}>like</button></p>
 				<p>{blog.author}</p>
 
 				{ owner === blog.user?.username ? <button onClick={remove}>remove</button> : null}
