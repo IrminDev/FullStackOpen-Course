@@ -109,6 +109,22 @@ const App = () => {
     </form>
   )
 
+  const removeBlog = async (id) => {
+    try{
+      await blogService.remove(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+      setMessage(`blog removed`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setMessage('Wrong credentials')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
   const blogsForm = () => (
     <div>
       <h2>blogs</h2>
@@ -120,10 +136,11 @@ const App = () => {
         <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
       </div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} removeBlog={removeBlog} owner={user.username} />
       )}
     </div>
   )
+
 
   return (
     
