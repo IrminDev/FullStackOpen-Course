@@ -9,6 +9,8 @@ const mongoose = require('mongoose')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
+const testingRouter = require('./controllers/test')
+require('dotenv').config()
 
 mongoose.set('strictQuery', false)
 
@@ -25,5 +27,10 @@ app.use(middleware.tokenExtractor)
 app.use('/api/blogs', middleware.userExtractor, blogRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+console.log('process.env.NODE_ENV', process.env.NODE_ENV, '1')
+if (process.env.NODE_ENV === 'test ') {
+    console.log('testingRouter')
+    app.use('/api/testing', testingRouter)
+}
 
 module.exports = app
