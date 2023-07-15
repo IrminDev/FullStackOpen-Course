@@ -33,7 +33,7 @@ describe('Blog app', () => {
 		})
 	})
 
-	describe.only('When logged in', () => {
+	describe('When logged in', () => {
 		beforeEach(function() {
 			const user = {
 				name: 'Irmin Dev',
@@ -63,6 +63,26 @@ describe('Blog app', () => {
       cy.contains('view').click()
       cy.contains('like').click()
       cy.contains('1')
+    })
+
+    it('A blog can be deleted', () => {
+      cy.contains('view').click()
+      cy.contains('remove').click()
+      cy.contains('blog removed')
+    })
+
+    it('A blog cannot be deleted by another user', () => {
+      cy.contains('logout').click()
+      cy.visit('http://localhost:3000')
+      const user = {
+        name: 'Irmin Dev Fake',
+        username: 'IrminDevFake',
+        password: 'TopSecretPassword'
+      }
+      cy.request('POST', 'http://localhost:3003/api/users/', user)
+      cy.login({ username: 'IrminDevFake', password: 'TopSecretPassword' })
+      cy.contains('view').click()
+      cy.contains('remove').should('not.exist')
     })
 	})
 })
