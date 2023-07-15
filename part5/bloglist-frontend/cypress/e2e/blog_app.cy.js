@@ -18,6 +18,11 @@ describe('Blog app', () => {
 	})
 
 	describe('Login', () => {
+		const user = {
+			name: 'Irmin Dev',
+			username: 'IrminDev',
+			password: 'TopSecretPassword'
+		}
 		it('succeeds with correct credentials', () => {
 			cy.get('#username').type(user.username)
 			cy.get('#password').type(user.password)
@@ -54,35 +59,46 @@ describe('Blog app', () => {
 	})
 
 	describe.only('When logged in and a blog exists', () => {
-    beforeEach(function() {
-      cy.login({ username: 'IrminDev', password: 'TopSecretPassword' })
-      cy.createBlog({ title: 'A blog created by cypress', author: 'Cypress', url: 'https://www.cypress.io/' })
-    })
+		beforeEach(function() {
+			cy.login({ username: 'IrminDev', password: 'TopSecretPassword' })
+			cy.createBlog({ title: 'A blog created by cypress', author: 'Cypress', url: 'https://www.cypress.io/' })
+		})
 
-    it('A blog can be liked', () => {
-      cy.contains('view').click()
-      cy.contains('like').click()
-      cy.contains('1')
-    })
+		it('A blog can be liked', () => {
+			cy.contains('view').click()
+			cy.contains('like').click()
+			cy.contains('1')
+		})
 
-    it('A blog can be deleted', () => {
-      cy.contains('view').click()
-      cy.contains('remove').click()
-      cy.contains('blog removed')
-    })
+		it('A blog can be deleted', () => {
+			cy.contains('view').click()
+			cy.contains('remove').click()
+			cy.contains('blog removed')
+		})
 
-    it('A blog cannot be deleted by another user', () => {
-      cy.contains('logout').click()
-      cy.visit('http://localhost:3000')
-      const user = {
-        name: 'Irmin Dev Fake',
-        username: 'IrminDevFake',
-        password: 'TopSecretPassword'
-      }
-      cy.request('POST', 'http://localhost:3003/api/users/', user)
-      cy.login({ username: 'IrminDevFake', password: 'TopSecretPassword' })
-      cy.contains('view').click()
-      cy.contains('remove').should('not.exist')
-    })
+		it('A blog cannot be deleted by another user', () => {
+			cy.contains('logout').click()
+			cy.visit('http://localhost:3000')
+			const user = {
+				name: 'Irmin Dev Fake',
+				username: 'IrminDevFake',
+				password: 'TopSecretPassword'
+			}
+			cy.request('POST', 'http://localhost:3003/api/users/', user)
+			cy.login({ username: 'IrminDevFake', password: 'TopSecretPassword' })
+			cy.contains('view').click()
+			cy.contains('remove').should('not.exist')
+		})
+
+		it('Blogs are ordered according to likes', () => {
+			cy.createBlog({ title: 'A blog created by cypress 2', author: 'Cypress', url: 'https://www.cypress.io/' })
+			cy.createBlog({ title: 'A blog created by cypress 3', author: 'Cypress', url: 'https://www.cypress.io/' })
+			cy.likeBlogs()
+			cy.get('.blog').then(blogs => {
+				cy.wrap(blogs[0]).contains('2')
+				cy.wrap(blogs[1]).contains('1')
+				cy.wrap(blogs[2]).contains('0')
+			})
+		})
 	})
 })
