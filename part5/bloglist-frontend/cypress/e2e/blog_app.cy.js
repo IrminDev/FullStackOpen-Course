@@ -2,6 +2,12 @@ describe('Blog app', () => {
 	beforeEach(function() {
 		cy.request('POST', 'http://localhost:3003/api/testing/reset')
 		cy.visit('http://localhost:3000')
+		const user = {
+			name: 'Irmin Dev',
+			username: 'IrminDev',
+			password: 'TopSecretPassword'
+		}
+		cy.request('POST', 'http://localhost:3003/api/users/', user)
 	})
 
 	it('Login form is shown', () => {
@@ -12,16 +18,6 @@ describe('Blog app', () => {
 	})
 
 	describe('Login', () => {
-		let user
-		beforeEach(function() {
-			user = {
-				name: 'Irmin Dev',
-				username: 'IrminDev',
-				password: 'TopSecretPassword'
-			}
-			cy.request('POST', 'http://localhost:3003/api/users/', user)
-		})
-
 		it('succeeds with correct credentials', () => {
 			cy.get('#username').type(user.username)
 			cy.get('#password').type(user.password)
@@ -44,10 +40,7 @@ describe('Blog app', () => {
 				username: 'IrminDev',
 				password: 'TopSecretPassword'
 			}
-			cy.request('POST', 'http://localhost:3003/api/users/', user)
-			cy.get('#username').type(user.username)
-			cy.get('#password').type(user.password)
-			cy.get('#login-button').click()
+			cy.login(user)
 		})
 
 		it('A blog can be created', () => {
@@ -58,5 +51,18 @@ describe('Blog app', () => {
 			cy.get('#create-button').click()
 			cy.contains('a new blog A blog created by cypress by Cypress added')
 		})
+	})
+
+	describe.only('When logged in and a blog exists', () => {
+    beforeEach(function() {
+      cy.login({ username: 'IrminDev', password: 'TopSecretPassword' })
+      cy.createBlog({ title: 'A blog created by cypress', author: 'Cypress', url: 'https://www.cypress.io/' })
+    })
+
+    it('A blog can be liked', () => {
+      cy.contains('view').click()
+      cy.contains('like').click()
+      cy.contains('1')
+    })
 	})
 })
