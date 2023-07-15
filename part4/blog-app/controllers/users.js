@@ -3,7 +3,6 @@ const usersRouter = require('express').Router()
 const bcrypt = require('bcryptjs')
 
 usersRouter.post('/', async (request, response) => {
-    console.log('request.body', request.body)
     const body = request.body
 
     if(!body.password || body.password.length < 3) {
