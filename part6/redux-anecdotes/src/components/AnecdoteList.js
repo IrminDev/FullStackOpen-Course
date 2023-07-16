@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { voteFor } from '../reducers/anecdoteReducer'
+import { vote } from '../reducers/anecdoteReducer'
 
 const Anecdote = ({ anecdote, handleClick }) => {
     return (
@@ -19,8 +19,8 @@ const Anecdote = ({ anecdote, handleClick }) => {
 const AnecdoteList = () => {
     const dispatch = useDispatch()
 
-    const vote = (id) => {
-        dispatch(voteFor(id))
+    const voteFor = (id) => {
+        dispatch(vote(id))
     }
 
     const anecdotes = useSelector(state => { 
@@ -33,7 +33,7 @@ const AnecdoteList = () => {
     return (
         <div>
             {anecdotes.map(anecdote => 
-                <Anecdote anecdote={anecdote} handleClick={() => vote(anecdote.id)} />
+                <Anecdote anecdote={anecdote} handleClick={() => voteFor(anecdote.id)} />
             )}
         </div>
     )
