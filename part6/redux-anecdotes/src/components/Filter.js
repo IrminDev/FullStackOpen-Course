@@ -18,6 +18,6 @@ const Filter = () => {
         filter <input onChange={handleChange} />
       </div>
     )
-  }
+}
   
-  export default Filter
+export default Filter
