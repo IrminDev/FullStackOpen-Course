@@ -7,4 +7,5 @@ export const getAnecdotes = () =>
 export const createAnecdote = (content) =>
     axios.post(baseUrl, { content, votes: 0 }).then(response => response.data)
 
-    
+export const updateAnecdote = ({id, votes}) =>
+    axios.patch(`${baseUrl}/${id}`, { votes }).then(response => response.data)
