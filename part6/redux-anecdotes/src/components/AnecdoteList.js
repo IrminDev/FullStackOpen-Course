@@ -23,7 +23,13 @@ const AnecdoteList = () => {
         dispatch(voteFor(id))
     }
 
-    const anecdotes = useSelector(state => state).toSorted((a, b) => b.votes - a.votes)
+    const anecdotes = useSelector(state => { 
+        if(state.filter === '') {
+            return state.anecdotes
+        }
+        return state.anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(state.filter.toLowerCase()))
+    }).toSorted((a, b) => b.votes - a.votes)
+
     return (
         <div>
             {anecdotes.map(anecdote => 
