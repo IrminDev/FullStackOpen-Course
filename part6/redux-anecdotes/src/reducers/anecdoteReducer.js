@@ -14,6 +14,7 @@ const anecdoteSlice = createSlice({
       return state.map(a => a.id !== id ? a : votedAnecdote)
     },
     add(state, action) {
+      console.log('action.payload', action.payload)
       return state.concat(action.payload)
     },
     appendAnecdote(state, action) {

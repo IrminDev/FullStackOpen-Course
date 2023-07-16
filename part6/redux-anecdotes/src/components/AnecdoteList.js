@@ -38,7 +38,7 @@ const AnecdoteList = () => {
     return (
         <div>
             {anecdotes.map(anecdote => 
-                <Anecdote anecdote={anecdote} handleClick={() => voteFor(anecdote.id)} />
+                <Anecdote key={anecdote.id} anecdote={anecdote} handleClick={() => voteFor(anecdote.id)} />
             )}
         </div>
     )
