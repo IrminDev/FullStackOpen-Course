@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Link,
   useNavigate,
-  useParams,
   useMatch
 } from 'react-router-dom'
 import { useField } from './hooks'
