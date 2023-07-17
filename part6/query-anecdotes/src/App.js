@@ -3,9 +3,11 @@ import Notification from './components/Notification'
 import { useQuery, useQueryClient, useMutation } from 'react-query'
 import { getAnecdotes } from './requests'
 import { updateAnecdote } from './requests'
+import { useNotificationDispatch } from './NotificationContext'
 
 const App = () => {
   const queryClient = useQueryClient()
+  const dispatch = useNotificationDispatch()
 
   const updateAnecdoteMutation = useMutation(updateAnecdote, {
     onSuccess: (newAnecdote) => {
@@ -19,6 +21,10 @@ const App = () => {
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1})
+    dispatch({type: 'SET_NOTIFICATION', data: `You voted '${anecdote.content}'`})
+    setTimeout(() => {
+      dispatch({type: 'CLEAR_NOTIFICATION'})
+    }, 5000)
   }
 
   const result = useQuery('anecdotes', getAnecdotes, {
