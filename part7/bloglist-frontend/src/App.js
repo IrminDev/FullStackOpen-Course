@@ -5,13 +5,14 @@ import loginService from "./services/login";
 import Message from "./components/Message";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
+import { useNotificationDispatch } from "./NotificationContext";
 
 const App = () => {
+  const dispatch = useNotificationDispatch();
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     blogService
@@ -41,9 +42,9 @@ const App = () => {
       setPassword("");
       blogService.setToken(userLog.token);
     } catch (exception) {
-      setMessage("Wrong credentials");
+      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
       setTimeout(() => {
-        setMessage(null);
+        dispatch({ type: "CLEAR_NOTIFICATION" })
       }, 5000);
     }
   };
@@ -54,9 +55,9 @@ const App = () => {
       setUser(null);
       window.localStorage.removeItem("loggedBlogappUser");
     } catch (exception) {
-      setMessage("Wrong credentials");
+      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
       setTimeout(() => {
-        setMessage(null);
+        dispatch({ type: "CLEAR_NOTIFICATION" })
       }, 5000);
     }
   };
@@ -65,14 +66,14 @@ const App = () => {
     try {
       const blogCreated = await blogService.create(blog);
       setBlogs(blogs.concat(blogCreated));
-      setMessage(`a new blog ${blog.title} by ${blog.author} added`);
+      dispatch({ type: "SET_NOTIFICATION", data: "Blog created" })
       setTimeout(() => {
-        setMessage(null);
+        dispatch({ type: "CLEAR_NOTIFICATION" })
       }, 5000);
     } catch (exception) {
-      setMessage("Wrong credentials");
+      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
       setTimeout(() => {
-        setMessage(null);
+        dispatch({ type: "CLEAR_NOTIFICATION" });
       }, 5000);
     }
   };
@@ -81,9 +82,9 @@ const App = () => {
     try {
       await blogService.update(blog);
     } catch (exception) {
-      setMessage("Wrong credentials");
+      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
       setTimeout(() => {
-        setMessage(null);
+        dispatch({ type: "CLEAR_NOTIFICATION" })
       }, 5000);
     }
   };
@@ -121,14 +122,14 @@ const App = () => {
     try {
       await blogService.remove(id);
       setBlogs(blogs.filter((blog) => blog.id !== id));
-      setMessage("blog removed");
+      dispatch({ type: "SET_NOTIFICATION", data: "Blog removed" })
       setTimeout(() => {
-        setMessage(null);
+        dispatch({ type: "CLEAR_NOTIFICATION" })
       }, 5000);
     } catch (exception) {
-      setMessage("Wrong credentials");
+      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
       setTimeout(() => {
-        setMessage(null);
+        dispatch({ type: "CLEAR_NOTIFICATION" })
       }, 5000);
     }
   };
@@ -158,7 +159,7 @@ const App = () => {
 
   return (
     <div>
-      <Message message={message} />
+      <Message />
       {user === null && loginForm()}
       {user !== null && blogsForm()}
     </div>
