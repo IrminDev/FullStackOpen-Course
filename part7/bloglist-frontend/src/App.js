@@ -11,6 +11,7 @@ import User from "./components/User";
 import { Link, Route, Routes } from "react-router-dom";
 import BlogDetail from "./components/BlogDetail";
 import BlogList from "./components/BlogList";
+import "./index.css";
 
 const App = () => {
   const dispatchUser = useUserDispatch();
@@ -77,7 +78,7 @@ const App = () => {
   };
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
+    <form  onSubmit={handleLogin}>
       <h2>Log in to application</h2>
       <div>
         username
@@ -102,17 +103,17 @@ const App = () => {
   );
 
   return (
-    <div>
+    <div className=" font">
       <Message />
       <Header />
       {user === null && loginForm()}
       {user !== null ? (
         <>
-        <div>
-          <Link to="/">blogs</Link>
-          <Link to="/users">users</Link>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
+        <div className=" flex items-center justify-evenly mt-10">
+          <Link className=" text-slate-500 uppercase font-semibold border-2 p-2 rounded-lg border-slate-800" to="/">blogs</Link>
+          <Link className=" text-slate-500 uppercase font-semibold border-2 p-2 rounded-lg border-slate-800" to="/users">users</Link>
+          <p className=" text-slate-700" >{user.name} logged in</p>
+          <button className=" px-3 bg-slate-800 py-2 text-slate-200 rounded-xl" onClick={handleLogout}>logout</button>
         </div>
         <Routes>
           <Route path="/" element={<BlogList blogsList={blogs} />} />

@@ -17,10 +17,10 @@ const User = () => {
 
   return (
     <div>
-        <h2>{user.name}</h2>
-        <h3>added blogs</h3>
+        <h2 className=" font-semibold text-3xl text-center text-slate-600">{user.name}</h2>
+        <h3 className=" font-semibold uppercase text-slate-950 mb-2">added blogs</h3>
         <ul>
-          {user.blogs?.map(blog => <li key={blog.id}>{blog.title}</li>)}
+          {user.blogs?.map(blog => <li className=" text-slate-700 font-medium mt-2 " key={blog.id}>{blog.title}</li>)}
         </ul>
     </div>
   )

@@ -11,7 +11,7 @@ const UsersList = () => {
     
     return (
         <div>
-            <h2>Users</h2>
+            <h2 className=" font-bold text-slate-700 text-lg">Users</h2>
             <table>
                 <thead>
                     <tr>
@@ -21,8 +21,8 @@ const UsersList = () => {
                 </thead>
                 <tbody>
                 {users.map(user => <tr key={user.id}>
-                        <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
-                        <td>{user.blogs.length}</td>
+                        <td className=" text-slate-600 font-semibold pr-5"><Link to={`/users/${user.id}`}>{user.name}</Link></td>
+                        <td className=" text-sky-700 font-bold">{user.blogs.length}</td>
                     </tr>)}
                 </tbody>
             </table>
