@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -7,19 +7,18 @@ import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { useNotificationDispatch } from "./NotificationContext";
 import { useQuery } from "react-query"
-
+import { useUserDispatch, useUserValue } from "./UserContext";
 
 const App = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+  const dispatchUser = useUserDispatch();
+  const user = useUserValue();
   
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
+      const userStored = JSON.parse(loggedUserJSON);
+      dispatchUser({ type: "SET_USER", data: userStored });
+      blogService.setToken(userStored.token);
     }
   }, []);
 
@@ -45,13 +44,13 @@ const App = () => {
     event.preventDefault();
     try {
       const userLog = await loginService.login({
-        username,
-        password,
+        username: event.target.username.value,
+        password: event.target.password.value,
       });
-      setUser(userLog);
+      dispatchUser({ type: "SET_USER", data: userLog });
+      event.target.username.value = "";
+      event.target.password.value = "";
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(userLog));
-      setUsername("");
-      setPassword("");
       blogService.setToken(userLog.token);
     } catch (exception) {
       dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
@@ -64,7 +63,7 @@ const App = () => {
   const handleLogout = async (event) => {
     event.preventDefault();
     try {
-      setUser(null);
+      dispatchUser({ type: "CLEAR_USER"});
       window.localStorage.removeItem("loggedBlogappUser");
     } catch (exception) {
       dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
@@ -82,9 +81,7 @@ const App = () => {
         <input
           type="text"
           id="username"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
+          name="username"
         />
       </div>
       <div>
@@ -92,9 +89,7 @@ const App = () => {
         <input
           type="password"
           id="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
+          name="password"
         />
       </div>
       <button id="login-button" type="submit">
