@@ -1,13 +1,16 @@
 import { useEffect } from "react";
-import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Message from "./components/Message";
-import Togglable from "./components/Togglable";
-import BlogForm from "./components/BlogForm";
 import { useNotificationDispatch } from "./NotificationContext";
 import { useQuery } from "react-query"
 import { useUserDispatch, useUserValue } from "./UserContext";
+import Header from "./components/Header";
+import UsersList from "./components/UsersList";
+import User from "./components/User";
+import { Link, Route, Routes } from "react-router-dom";
+import BlogDetail from "./components/BlogDetail";
+import BlogList from "./components/BlogList";
 
 const App = () => {
   const dispatchUser = useUserDispatch();
@@ -39,7 +42,7 @@ const App = () => {
   }
   
   const blogs = resultBlogs.data;
-  
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -98,32 +101,30 @@ const App = () => {
     </form>
   );
 
-  const blogsList = (blogsList) => (
-    <div>
-      <h2>blogs</h2>
-      <Togglable key="toggle" buttonLabel="new blog">
-        <BlogForm />
-      </Togglable>
-
-      <div>
-        <p>{user.name} logged in</p>{" "}
-        <button onClick={handleLogout}>logout</button>
-      </div>
-      {blogsList.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          owner={user.username}
-        />
-      ))}
-    </div>
-  );
-
   return (
     <div>
       <Message />
+      <Header />
       {user === null && loginForm()}
-      {user !== null && blogsList(blogs)}
+      {user !== null ? (
+        <>
+        <div>
+          <Link to="/">blogs</Link>
+          <Link to="/users">users</Link>
+          <p>{user.name} logged in</p>
+          <button onClick={handleLogout}>logout</button>
+        </div>
+        <Routes>
+          <Route path="/" element={<BlogList blogsList={blogs} />} />
+          <Route path="/users" element={<UsersList />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route path="/blogs/:id" element={<BlogDetail />} />
+        </Routes>
+        </>
+      ) : (
+        <div>
+        </div>
+      )}
     </div>
   );
 };
