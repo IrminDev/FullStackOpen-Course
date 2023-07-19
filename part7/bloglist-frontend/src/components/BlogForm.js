@@ -1,22 +1,32 @@
 import React from "react";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { useNotificationDispatch } from "../NotificationContext";
+import blogService from "../services/blogs";
 
-function BlogForm({ createBlog }) {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+function BlogForm() {
+  const queryClient = useQueryClient();
+  const dispatch = useNotificationDispatch();
+
+  const newBlogMutation = useMutation(blogService.create, {
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData("blogs");
+      queryClient.setQueryData("blogs", [...blogs, newBlog]);
+    }
+  })
 
   const addBlog = (event) => {
     event.preventDefault();
-    createBlog({
-      title,
-      author,
-      url,
-    });
-
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    const title = event.target.title.value;
+    const author = event.target.author.value;
+    const url = event.target.url.value;
+    event.target.title.value = "";
+    event.target.author.value = "";
+    event.target.url.value = "";
+    newBlogMutation.mutate({ title, author, url });
+    dispatch({ type: "SET_NOTIFICATION", data: `a new blog ${title} by ${author} added` });
+    setTimeout(() => {
+      dispatch({ type: "CLEAR_NOTIFICATION" });
+    }, 5000);
   };
   return (
     <form onSubmit={addBlog} className="form">
@@ -25,9 +35,7 @@ function BlogForm({ createBlog }) {
         <input
           type="text"
           id="title"
-          value={title}
           name="title"
-          onChange={({ target }) => setTitle(target.value)}
         />
       </div>
       <div>
@@ -35,9 +43,7 @@ function BlogForm({ createBlog }) {
         <input
           type="text"
           id="author"
-          value={author}
           name="author"
-          onChange={({ target }) => setAuthor(target.value)}
         />
       </div>
       <div>
@@ -45,9 +51,7 @@ function BlogForm({ createBlog }) {
         <input
           type="text"
           id="url"
-          value={url}
           name="url"
-          onChange={({ target }) => setUrl(target.value)}
         />
       </div>
 

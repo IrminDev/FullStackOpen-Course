@@ -1,22 +1,62 @@
 import Togglable from "./Togglable";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { useNotificationDispatch } from "../NotificationContext";
+import blogService from "../services/blogs";
 
-const Blog = ({ blog, handleLike, removeBlog, owner }) => {
-  const [likes, setLikes] = useState(blog.likes);
+const Blog = ({ blog, owner }) => {
+  const queryClient = useQueryClient();
+  const dispatch = useNotificationDispatch();
+
+  const updateBlogMutation = useMutation(blogService.update, {
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData("blogs");
+      const updatedBlogs = blogs.map((blog) => {
+        return blog.id === newBlog.id ? newBlog : blog;
+      });
+      queryClient.setQueryData("blogs", updatedBlogs);
+    }
+  });
+
+  const deleteBlogMutation = useMutation(blogService.remove, {
+    onSuccess: (deletedBlog) => {
+      const blogs = queryClient.getQueryData("blogs");
+      const updatedBlogs = blogs.filter((blog) => {
+        return blog.id !== deletedBlog.id;
+      });
+      queryClient.setQueryData("blogs", updatedBlogs);
+    }
+  })
 
   const likeBlog = () => {
     const blogObject = {
       ...blog,
-      likes: likes + 1,
-      user: blog.user.id,
-    };
-    handleLike(blogObject);
-    setLikes(likes + 1);
+      likes: blog.likes + 1,
+      user: blog.user.id
+    }
+    try {
+      updateBlogMutation.mutate(blogObject);
+    } catch (exception) {
+      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
+      setTimeout(() => {
+        dispatch({ type: "CLEAR_NOTIFICATION" })
+      }, 5000);
+    }
   };
 
-  const remove = () => {
+  const remove = async () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      removeBlog(blog.id);
+      try {
+        deleteBlogMutation.mutate(blog.id);
+        dispatch({ type: "SET_NOTIFICATION", data: "Blog removed" })
+        setTimeout(() => {
+          dispatch({ type: "CLEAR_NOTIFICATION" })
+        }, 5000);
+      } catch (exception) {
+        dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
+        setTimeout(() => {
+          dispatch({ type: "CLEAR_NOTIFICATION" })
+        }, 5000);
+      }
     }
   };
 
@@ -26,7 +66,7 @@ const Blog = ({ blog, handleLike, removeBlog, owner }) => {
       <Togglable buttonLabel="view">
         <p className="url">{blog.url}</p>
         <p className="likes">
-          {likes} <button onClick={likeBlog}>like</button>
+          {blog.likes} <button onClick={likeBlog}>like</button>
         </p>
         <p>{blog.author}</p>
 

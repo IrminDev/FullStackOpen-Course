@@ -6,20 +6,14 @@ import Message from "./components/Message";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { useNotificationDispatch } from "./NotificationContext";
+import { useQuery } from "react-query"
+
 
 const App = () => {
-  const dispatch = useNotificationDispatch();
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
-  }, []);
-
+  
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
@@ -29,6 +23,24 @@ const App = () => {
     }
   }, []);
 
+  const dispatch = useNotificationDispatch();
+  
+  const resultBlogs = useQuery("blogs", blogService.getAll, {
+    retry: true,
+    refetchOnWindowFocus: true,
+  })
+  
+  
+  if (resultBlogs.isLoading) {
+    return <div>Loading...</div>
+  }
+  
+  if(resultBlogs.isError) {
+    return <div>Error: {resultBlogs.error.message}</div>
+  }
+  
+  const blogs = resultBlogs.data;
+  
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -54,33 +66,6 @@ const App = () => {
     try {
       setUser(null);
       window.localStorage.removeItem("loggedBlogappUser");
-    } catch (exception) {
-      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
-      setTimeout(() => {
-        dispatch({ type: "CLEAR_NOTIFICATION" })
-      }, 5000);
-    }
-  };
-
-  const handleCreate = async (blog) => {
-    try {
-      const blogCreated = await blogService.create(blog);
-      setBlogs(blogs.concat(blogCreated));
-      dispatch({ type: "SET_NOTIFICATION", data: "Blog created" })
-      setTimeout(() => {
-        dispatch({ type: "CLEAR_NOTIFICATION" })
-      }, 5000);
-    } catch (exception) {
-      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
-      setTimeout(() => {
-        dispatch({ type: "CLEAR_NOTIFICATION" });
-      }, 5000);
-    }
-  };
-
-  const handleLike = async (blog) => {
-    try {
-      await blogService.update(blog);
     } catch (exception) {
       dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
       setTimeout(() => {
@@ -118,39 +103,21 @@ const App = () => {
     </form>
   );
 
-  const removeBlog = async (id) => {
-    try {
-      await blogService.remove(id);
-      setBlogs(blogs.filter((blog) => blog.id !== id));
-      dispatch({ type: "SET_NOTIFICATION", data: "Blog removed" })
-      setTimeout(() => {
-        dispatch({ type: "CLEAR_NOTIFICATION" })
-      }, 5000);
-    } catch (exception) {
-      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
-      setTimeout(() => {
-        dispatch({ type: "CLEAR_NOTIFICATION" })
-      }, 5000);
-    }
-  };
-
-  const blogsForm = () => (
+  const blogsList = (blogsList) => (
     <div>
       <h2>blogs</h2>
       <Togglable key="toggle" buttonLabel="new blog">
-        <BlogForm createBlog={handleCreate} />
+        <BlogForm />
       </Togglable>
 
       <div>
         <p>{user.name} logged in</p>{" "}
         <button onClick={handleLogout}>logout</button>
       </div>
-      {blogs.map((blog) => (
+      {blogsList.map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
-          handleLike={handleLike}
-          removeBlog={removeBlog}
           owner={user.username}
         />
       ))}
@@ -161,7 +128,7 @@ const App = () => {
     <div>
       <Message />
       {user === null && loginForm()}
-      {user !== null && blogsForm()}
+      {user !== null && blogsList(blogs)}
     </div>
   );
 };
