@@ -17,7 +17,7 @@ const BlogDetail = () => {
   }, []);
   
   useEffect(() => {
-    if(blog) {
+    if(blog?.user) {
       usersService.getOne(blog.user).then((user) => {setUser(user)})
     }
   }, [blog]);
@@ -52,6 +52,25 @@ const BlogDetail = () => {
     }
   };
 
+  const commentBlog = (event) => {
+    event.preventDefault();
+    const comment = event.target.comment.value;
+    const blogObject = {
+      ...blog,
+      comments: blog.comments.concat(comment),
+      user: blog.user.id
+    }
+    try {
+      updateBlogMutation.mutate(blogObject);
+      setBlog(blogObject);
+    } catch (exception) {
+      dispatch({ type: "SET_NOTIFICATION", data: "Wrong credentials" });
+      setTimeout(() => {
+        dispatch({ type: "CLEAR_NOTIFICATION" })
+      }, 5000);
+    }
+  }
+
   if(!blog) return null;
 
   return (
@@ -62,6 +81,16 @@ const BlogDetail = () => {
         <button onClick={likeBlog}>like</button>
       </p>
       <p>added by {user?.name}</p>
+      <h2>Comments</h2>
+      <form onSubmit={commentBlog}>
+        <input type="text" name="comment" />
+        <button type="submit">add comment</button>
+      </form>
+      <ul>
+        {blog.comments.map((comment, i) => {
+          return <li key={i}>{comment}</li>
+        })}
+      </ul>
     </div>
   )
 }
