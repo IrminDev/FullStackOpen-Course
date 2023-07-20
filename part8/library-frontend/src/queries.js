@@ -59,3 +59,15 @@ export const LOGIN = gql`
         }
     }
 `
+
+export const FAVORITE_BOOKS = gql`
+    query favoriteBooks {
+        favoriteBooks {
+            title
+            published
+            author {
+                name
+            }
+        }
+    }
+`
