@@ -5,7 +5,8 @@ import { useState } from 'react'
 const Books = (props) => {
   const [genre, setGenre] = useState('');
   const result = useQuery(ALL_BOOKS)
-  const setBooks = useQuery(BOOKS_BY_GENRE, {variables: {genre: genre}})
+  const setBooks = useQuery(BOOKS_BY_GENRE, {variables: {genre: genre},
+    fetchPolicy: 'network-only'})
 
   if (!props.show) {
     return null
