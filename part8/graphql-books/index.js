@@ -3,6 +3,7 @@ const { startStandaloneServer } = require('@apollo/server/standalone')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
+import { GraphQLError } from 'graphql';
 
 mongoose.set('strictQuery', false)
 
@@ -77,6 +78,22 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
+      if(!args.title || !args.author || !args.published || !args.genres) {
+        throw new GraphQLError('All fields are required', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+
+      if(args.title.length < 4 || args.author.length < 4 || args.published < 0) {
+        throw new GraphQLError('Invalid input', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+
       const author = await Author.findOne({ name: args.author })
       if (!author) {
         const newAuthor = new Author({ name: args.author })
@@ -87,6 +104,22 @@ const resolvers = {
       return book.save()
     },
     editAuthor: async (root, args) => {
+      if(!args.name || !args.setBornTo) {
+        throw new GraphQLError('All fields are required', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+
+      if(args.name.length < 4 || args.setBornTo < 0) {
+        throw new GraphQLError('Invalid input', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+      
       const author = await Author.findOne({ name: args.author })
       if (!author) return null
       author.born = args.setBornTo
