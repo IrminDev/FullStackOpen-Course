@@ -7,7 +7,10 @@ const pubsub = new PubSub()
 
 const resolvers = {
     Query: {
-      bookCount: async () => await Book.countDocuments(),
+      bookCount: async () => {
+        console.log('bookCount')
+        return await Book.countDocuments()
+      },
       authorCount: async () => await Author.countDocuments(),
       allBooks: async () => 
         await Book.find({}).populate('author'),
@@ -15,6 +18,7 @@ const resolvers = {
         const authors = await Author.find({})
         return authors.map(async author  => {
           const bookCount = await Book.find({ author: author._id }).count()
+          console.log('books')
           return { name: author.name, born: author?.born, bookCount }
         })
       },
