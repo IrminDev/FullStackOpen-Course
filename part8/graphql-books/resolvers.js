@@ -73,7 +73,8 @@ const resolvers = {
           author = newAuthor
         }
         const book = new Book({ ...args, author: author._id })
-        const bookSaved = await book.save()
+        let bookSaved = await book.save()
+        bookSaved = await Book.findById(bookSaved._id).populate('author')
 
         pubsub.publish('BOOK_ADDED', { bookAdded: bookSaved })
   

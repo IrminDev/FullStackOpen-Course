@@ -4,16 +4,37 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import HomePage from './components/HomePage'
-import { useSubscription } from '@apollo/client'
+import { useSubscription, useApolloClient } from '@apollo/client'
 import { BOOK_ADDED } from './queries'
+import { ALL_BOOKS } from './queries'
+
+export const updateCache = (cache, query, addedBook) => {
+  const uniByTitle = (a) => {
+    let seen = new Set();
+    return a.filter(item => {
+      let k = item.title;
+      return seen.has(k) ? false : seen.add(k);
+    })
+  }
+
+  cache.updateQuery(query, ({allBooks}) => {
+    return{
+      allBooks: uniByTitle(allBooks.concat(addedBook))
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('home')
   const [token, setToken] = useState('');
+  const client = useApolloClient()
 
   useSubscription(BOOK_ADDED, {
-    onData: ({ subscriptionData }) => {
-      window.alert(`New book added: ${subscriptionData.data.bookAdded.title}`)
+    onData: ({ data }) => {
+      window.alert(`New book added`)
+      console.log(data)
+      const addedBook = data.data.bookAdded
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
     }
   })
 
