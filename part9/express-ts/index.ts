@@ -5,7 +5,7 @@ const app = express();
 
 app.get('/hello', (_req, res) => {
     res.send('Hello Full Stack!');
-})
+});
 
 app.get('/bmi', (req, res) => {
     const height = req.query.height;
@@ -18,10 +18,10 @@ app.get('/bmi', (req, res) => {
         const bmi = calculateBMI(Number(height)*0.01, Number(weight));
         res.json({ height, weight, bmi });
     }
-})
+});
 
 const PORT = 3003;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-})
+});

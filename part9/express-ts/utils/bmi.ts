@@ -9,8 +9,9 @@ export const calculateBMI = (height: number, weight: number): string => {
     } else {
         return "Obese";
     }
-}
+};
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isNumber = (value: any): boolean => {
     return !isNaN(Number(value));
-}
+};
