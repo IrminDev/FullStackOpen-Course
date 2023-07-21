@@ -4,10 +4,18 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import HomePage from './components/HomePage'
+import { useSubscription } from '@apollo/client'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('home')
   const [token, setToken] = useState('');
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ subscriptionData }) => {
+      window.alert(`New book added: ${subscriptionData.data.bookAdded.title}`)
+    }
+  })
 
   useEffect(() => {
     const token = localStorage.getItem('library-user-token')
