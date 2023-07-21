@@ -1,4 +1,4 @@
-const calculateBMI = (weight: number, height: number): string => {
+const calculateBMI = (height: number, weight: number): string => {
     const bmi = weight / (height * height);
     if (bmi < 18.5) {
         return "Underweight";
@@ -11,4 +11,14 @@ const calculateBMI = (weight: number, height: number): string => {
     }
 }
 
-console.log(calculateBMI(76, 1.8));
+const parse = (args: Array<string>): Array<number> => {
+    if (args.length < 4) throw new Error("Not enough arguments");
+    const height = Number(args[2]);
+    const weight = Number(args[3]);
+    if (isNaN(height) || isNaN(weight)) throw new Error("Provided values were not numbers!");
+    return [height*0.01, weight];
+}
+
+const argumentss = parse(process.argv);
+
+console.log(calculateBMI(argumentss[0], argumentss[1]));

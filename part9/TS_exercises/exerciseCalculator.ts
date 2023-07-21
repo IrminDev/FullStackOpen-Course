@@ -31,4 +31,16 @@ const calculateExercises = (hours: Array<number>, target: number): Results => {
     }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+const parseArguments = (args: Array<string>): ExerciseValues => {
+    if (args.length < 4) throw new Error("Not enough arguments");
+    const target = Number(args[2]);
+    const hours = args.slice(3).map(h => Number(h));
+    if (isNaN(target) || hours.some(h => isNaN(h))) throw new Error("Provided values were not numbers!");
+    return {
+        hours,
+        target
+    }
+}
+
+const arguments = parseArguments(process.argv);
+console.log(calculateExercises(arguments.hours, arguments.target));
