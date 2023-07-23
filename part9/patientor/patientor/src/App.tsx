@@ -5,7 +5,7 @@ import { Button, Divider, Container, Typography, Card, CardContent } from '@mui/
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import { apiBaseUrl } from "./constants";
-import { Patient, Entry, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from "./types";
+import { Patient, Entry, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry, EntryWithoutId } from "./types";
 import Stack from '@mui/material/Stack';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -14,9 +14,13 @@ import WorkIcon from '@mui/icons-material/Work';
 
 import patientService from "./services/patients";
 import PatientListPage from "./components/PatientListPage";
+import HealthCheckForm from "./components/AddEntryForm/HealtchCheckForm";
+import HospitalForm from "./components/AddEntryForm/HospitalForm";
+import OccupationalHealthcareForm from "./components/AddEntryForm/OccupationalHealthcareForm";
 
 const PatientPage = ({patients} : {patients: Patient[]}) => {
   const [patient, setPatient] = useState<Patient>()
+  const [form, setForm] = useState('health-check')
   const id = useParams<{ id: string }>().id;
 
   useEffect(() => {
@@ -33,12 +37,35 @@ const PatientPage = ({patients} : {patients: Patient[]}) => {
     return null;
   }
 
+  const handleSubmit = (entry: EntryWithoutId) => {
+    if(id){
+      try{
+        patientService.addEntry(id, entry);
+      } catch (e) {
+        if (e instanceof Error) {
+          console.log(e.message);
+        }
+      }
+    }
+  }
+
   return (
     <div>
       <h1>{patient.name}</h1>
       {patient.gender === 'male' ? <MaleIcon /> : <FemaleIcon />}
       <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+      <div>
+        <button onClick={() => {setForm('health-check')}}>Health Check</button>
+        <button onClick={() => {setForm('hospital')}}>Hospital</button>
+        <button onClick={() => {setForm('occupational-healthcare')}}>Occupational Healthcare</button>
+      </div>
+      <h2>add entry</h2>
+      <div>
+        <HealthCheckForm submit={handleSubmit} show={form === 'health-check'} />
+        <HospitalForm submit={handleSubmit} show={form === 'hospital'} />
+        <OccupationalHealthcareForm submit={handleSubmit} show={form === 'occupational-healthcare'} />
+      </div>
       <h2>entries</h2>
       <Stack spacing={2}>
         {patient.entries.map(entry => {
@@ -60,11 +87,11 @@ const assertNever = (value: never): never => {
 const EntryDetails = (entry: Entry) => {
   switch(entry.type){
     case 'HealthCheck':
-      return <HealthCheckEntryDetail entry={entry}></HealthCheckEntryDetail>
+      return <HealthCheckEntryDetail entry={entry} />
     case 'Hospital':
-      return <HospitalEntryDetail entry={entry}></HospitalEntryDetail>
+      return <HospitalEntryDetail entry={entry} />
     case 'OccupationalHealthcare':
-      return <OccupationalHealthcareEntryDetail entry={entry}></OccupationalHealthcareEntryDetail>
+      return <OccupationalHealthcareEntryDetail entry={entry} />
     default:
       return assertNever(entry);
   }
