@@ -34,6 +34,21 @@ const PatientPage = ({patients} : {patients: Patient[]}) => {
       {patient.gender === 'male' ? <MaleIcon /> : <FemaleIcon />}
       <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+      <h2>entries</h2>
+      {patient.entries.map(entry => {
+        return (
+          <div key={entry.id}>
+            <p>{entry.date} {entry.description}</p>
+            <ul>
+              {entry.diagnosisCodes?.map(code => {
+                return (
+                  <li key={code}>{code}</li>
+                )
+              })}
+            </ul>
+          </div>
+        )
+      })}
     </div>
   );
 }
