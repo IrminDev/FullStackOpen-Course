@@ -25,7 +25,7 @@ router.get('/:id', (req, res) => {
     const patient = patientService.getPatient(id);
     
     if(patient){
-        const patientMod = {...patient, entries: []};
+        const patientMod = {...patient};
         res.send(patientMod);
     } else {
         res.sendStatus(404);
